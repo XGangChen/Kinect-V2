@@ -3,7 +3,7 @@ This repository tries to run the Xbox KinectV2 using [libfreenect2](https://gith
 
 * Many issues would occur while setting up the system. Using GPT or any other AI tools to solve it is a good choice.
 
-## libfreenect2
+## [libfreenect2](https://github.com/OpenKinect/libfreenect2)
 ### Environment Setup
 * Create a conda environment for pylibfreenect2.
   ```
@@ -71,7 +71,7 @@ This repository tries to run the Xbox KinectV2 using [libfreenect2](https://gith
   ~/libfreenect2/build/bin/Protonect cuda
   ```
 
-## Python Environment Transfer
+## Python Environment Transfer ([pylibfreenect2](https://github.com/r9y9/pylibfreenect2))
 * Build deps (Cython needed; older setuptools is safer for legacy setup.py)
   ```
   pip install -U "pip<24.2" wheel "setuptools<70" "Cython<3"
