@@ -34,21 +34,22 @@ This repository tries to run the Xbox KinectV2 using [libfreenect2](https://gith
   ```
   git clone https://github.com/NVIDIA/cuda-samples.git
   ```
-* Install the development package for TurboJPEG
+* Install the development package for TurboJPEG and the OpenGL viewer.
   ```
   sudo apt update
   sudo apt install libturbojpeg0-dev
+  sudo apt install libglfw3-dev libglew-dev
   ```
 * Fresh build pointing to 12.8 Samples
   ```
-  cd ~/libfreenect2
-  mkdir build && cd build
-  
-  cmake .. \
+  cd ~/libfreenect2 && mkdir build && cd build
+  SAMPLES_INC="$HOME/cuda-samples/Common"
+  cmake "$HOME/libfreenect2" \
     -DENABLE_CUDA=ON \
+    -DCUDA_ARCH_BIN=89 -DCUDA_ARCH_PTX=89 \
+    -DCUDA_NVCC_FLAGS="-Wno-deprecated-gpu-targets;-I$SAMPLES_INC" \
     -DCMAKE_BUILD_TYPE=RelWithDebInfo \
-    -DCUDA_NVCC_FLAGS=-I"$HOME/cuda-samples/Common" \
-    -DCMAKE_INSTALL_PREFIX="$CONDA_PREFIX"
+    -DCMAKE_INSTALL_PREFIX="${CONDA_PREFIX:-$HOME/.local}"
   ```
 * Compile and install
   ```
