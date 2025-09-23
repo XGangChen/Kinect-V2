@@ -115,7 +115,10 @@ sudo ldconfig
 
 python -m pip install --no-build-isolation -e .
 ```
-Then you can run the example script `python example/multuframe_listener.py`
+Then you can run the example script:
+```
+python examples/multiframe_listener.py
+```
 
 ## [Kinect2 to ROS2](https://github.com/krepa098/kinect2_ros2)
 * You have to install ROS2 Humble first.
