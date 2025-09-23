@@ -42,19 +42,25 @@ This repository tries to run the Xbox KinectV2 using [libfreenect2](https://gith
   ```
 * Fresh build pointing to 12.8 Samples
   ```
-  cd ~/libfreenect2 && mkdir build && cd build
+  cd ~/libfreenect2
+  sudo mkdir build && cd build
   SAMPLES_INC="$HOME/cuda-samples/Common"
+  
   cmake "$HOME/libfreenect2" \
     -DENABLE_CUDA=ON \
     -DCUDA_ARCH_BIN=89 -DCUDA_ARCH_PTX=89 \
     -DCUDA_NVCC_FLAGS="-Wno-deprecated-gpu-targets;-I$SAMPLES_INC" \
     -DCMAKE_BUILD_TYPE=RelWithDebInfo \
-    -DCMAKE_INSTALL_PREFIX="${CONDA_PREFIX:-$HOME/.local}"
+    -DCMAKE_INSTALL_PREFIX=/usr/local
   ```
 * Compile and install
   ```
   make -j$(nproc)
   sudo make install
+  sudo ldconfig
+
+  # 2) Confirm headers are where many tools expect them
+  ls /usr/local/include/libfreenect2/config.h
   ```
 * Confirm whether Linux even “sees” the Kinect on the USB bus by `lsusb`. You should see something like `Bus 001 Device 007: ID 045e:02ad Microsoft Corp. Xbox NUI Kinect Sensor`. If there isn't exist, replug it and try again.
 * Copy the sample rules straight from the libfreenect2 repo. (The file name would be different; you should confirm by the same path.)
@@ -83,6 +89,9 @@ This repository tries to run the Xbox KinectV2 using [libfreenect2](https://gith
 
   # Install a prebuilt NumPy wheel compatible with Py3.9
   pip install "numpy==1.23.5"
+
+  conda install -c conda-forge libgcc-ng libstdcxx-ng
+  conda install opencv
   
   # Environment hints so the build can find the C/C++ bits
   export LIBFREENECT2_INSTALL_PREFIX="$CONDA_PREFIX"
@@ -91,16 +100,22 @@ This repository tries to run the Xbox KinectV2 using [libfreenect2](https://gith
   ```
 * Using Pylibfreenect2 [pylibfreeenect2](https://github.com/r9y9/pylibfreenect2 )
 ```
-pip install --no-build-isolation --no-cache-dir pylibfreenect2
-
 # from wherever you keep your projects…
 git clone https://github.com/r9y9/pylibfreenect2.git
 cd pylibfreenect2
 
-conda install -c conda-forge libgcc-ng libstdcxx-ng
-conda install opencv
+# If your real headers are in /usr/local, bridge them into the conda prefix:
+sudo mkdir -p "$CONDA_PREFIX/include/libfreenect2"
+sudo rsync -a /usr/local/include/libfreenect2/ "$CONDA_PREFIX/include/libfreenect2/"
+
+# Make sure libs are visible at runtime for Python
+sudo ln -sf /usr/local/lib/libfreenect2.so* "$CONDA_PREFIX/lib/" 2>/dev/null || true
+echo "$CONDA_PREFIX/lib" | sudo tee /etc/ld.so.conf.d/conda-libfreenect2.conf >/dev/null
+sudo ldconfig
+
+python -m pip install --no-build-isolation -e .
 ```
-Then you can run the example script `python multuframe_listener.py`
+Then you can run the example script `python example/multuframe_listener.py`
 
 ## [Kinect2 to ROS2](https://github.com/krepa098/kinect2_ros2)
 * You have to install ROS2 Humble first.
