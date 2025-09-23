@@ -34,10 +34,14 @@ This repository tries to run the Xbox KinectV2 using [libfreenect2](https://gith
   ```
   git clone https://github.com/NVIDIA/cuda-samples.git
   ```
+* Install the development package for TurboJPEG
+  ```
+  sudo apt update
+  sudo apt install libturbojpeg0-dev
+  ```
 * Fresh build pointing to 12.8 Samples
   ```
   cd ~/libfreenect2
-  sudo rm -rf build
   mkdir build && cd build
   
   cmake .. \
