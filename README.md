@@ -132,6 +132,53 @@ python examples/multiframe_listener.py
   cd ~/ros_ws/src
   git clone https://github.com/krepa098/kinect2_ros2.git
   ```
+* Install system-wide to /usr/local
+  ```
+  cd ~/libfreenect2/build
+  sudo make install
+  sudo ldconfig
+
+  # Verify Protonect installed copy:
+  ldd /usr/local/bin/Protonect | grep -i freenect2
+  # expect: /usr/local/lib/libfreenect2.so.0.2
+  ```
+* Install the image transport plugins (Humble)
+  ```
+  sudo apt update
+  sudo apt install -y \
+    ros-humble-compressed-image-transport \
+    ros-humble-compressed-depth-image-transport \
+    ros-humble-theora-image-transport \
+    ros-humble-image-transport-plugins \
+    ros-humble-depth-image-proc \
+    ros-humble-image-pipeline \
+    ros-humble-image-transport-plugins
+  ```
+* Do this in a fresh shell
+  ```
+  # 0) No conda
+  conda deactivate 2>/dev/null || true
+  conda deactivate 2>/dev/null || true
+  
+  # 1) Prefer /usr/local when finding/linking
+  export PKG_CONFIG_PATH=/usr/local/lib/pkgconfig:$PKG_CONFIG_PATH
+  export CMAKE_PREFIX_PATH=/usr/local:$CMAKE_PREFIX_PATH
+  export LD_LIBRARY_PATH=/usr/local/lib:$LD_LIBRARY_PATH
+  
+  # (optional but helpful)
+  export LDFLAGS="-L/usr/local/lib -Wl,-rpath,/usr/local/lib"
+  export CPPFLAGS="-I/usr/local/include"
+  
+  # 2) Base ROS 2
+  source /opt/ros/humble/setup.bash
+  source ~/ros_ws/install/setup.bash
+
+  
+  # 3) Clean rebuild
+  cd ~/ros_ws
+  rm -rf build install log
+  colcon build --symlink-install --cmake-args -DCMAKE_VERBOSE_MAKEFILE=ON
+  ```
   
 * Source the workspace
   ```
@@ -139,13 +186,15 @@ python examples/multiframe_listener.py
   echo "source ~/ros_ws/install/setup.bash" >> ~/.bashrc
   source ~/.bashrc
   ```
-* Verify the package is found
-  ```
-  ros2 pkg list | grep kinect2_bridge
-  # You should see "kinect2_bridge"
-  ```
 * Run the launch file
   ```
+  # sanity check:
+  ros2 pkg prefix depth_image_proc   # should print /opt/ros/humble or similar
+
+  # launch
   ros2 launch kinect2_bridge kinect2_bridge_launch.yaml
+
+  # View color image
+  ros2 run rqt_image_view rqt_image_view
   ```
 
