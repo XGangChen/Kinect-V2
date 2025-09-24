@@ -122,20 +122,21 @@ python examples/multiframe_listener.py
 
 ## [Kinect2 to ROS2](https://github.com/krepa098/kinect2_ros2)
 * You have to install ROS2 Humble first.
-* Clone the report into your `/ros_ws/src` and build.
+* Clone the report into your `/ros_ws/src` and build. (If you don't have it, make one.)
   ```
+  mkdir -p ~/ros_ws/src
+  cd ~/ros_ws
+  # Build the workspace
+  colcon build --symlink-install
+
   cd ~/ros_ws/src
   git clone https://github.com/krepa098/kinect2_ros2.git
   ```
-* Build the workspace
-  ```
-  cd ..
-  colcon build --symlink-install
-  ```
+  
 * Source the workspace
   ```
   # To avoid sourcing it every time you open the terminal, add this line to your ~/.bashrc
-  echo "source ~/ros2_ws/install/setup.bash" >> ~/.bashrc
+  echo "source ~/ros_ws/install/setup.bash" >> ~/.bashrc
   source ~/.bashrc
   ```
 * Verify the package is found
